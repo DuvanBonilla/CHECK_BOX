@@ -1,0 +1,295 @@
+import 'package:flutter/material.dart';
+import '../class/basic_form.dart';
+import 'formulario_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class TapasPage extends StatefulWidget {
+  const TapasPage({Key? key}) : super(key: key);
+
+  @override
+  State<TapasPage> createState() => _MyTapasPageState();
+}
+
+class _MyTapasPageState extends State<TapasPage> {
+  final List<BasicForm> _arrBasicForm = [];
+  String _lastSelectedValue = '';
+
+  late SharedPreferences _prefs;
+  final String _dataKey = 'myDataKey';
+
+  //Opciones para el ComboBox
+  List<String> externalOptions = [
+    'MANZANO',
+    'PLATANO 20LB',
+    'PLATANO EUROPEO UK',
+    'PLATANO USA',
+    'BURRO'
+  ];
+
+  void _clearAll() {
+    setState(() {
+      _arrBasicForm.clear();
+    });
+  }
+
+  int? currentFocusIndex;
+
+  void _add() async {
+    final focusNode = FocusNode();
+    final newForm = BasicForm(externalOptions, _lastSelectedValue, focusNode);
+    newForm.hasFocus = true;
+    _arrBasicForm.insert(
+        0, newForm); // Agrega el nuevo formulario al principio de la lista
+    currentFocusIndex =
+        0; // Establece el enfoque en el nuevo formulario agregado
+    newForm.requestFocus();
+    setState(() {});
+  }
+
+  void _send(BuildContext context) async {
+    List<Map<String, String>> dataList = [];
+    for (var i = 0; i < _arrBasicForm.length; i++) {
+      String trazabilidad = _arrBasicForm[i].name.text;
+      String fruta = _arrBasicForm[i].getSelectedValue;
+      Map<String, String> data = {'trazabilidad': trazabilidad, 'tapa': fruta};
+      dataList.add(data);
+    }
+    await _prefs.setStringList(
+        _dataKey,
+        dataList
+            .map((data) => '${data['trazabilidad']}:${data['tapa']}')
+            .toList());
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FormularioPage(
+          dataList: dataList,
+          placaController: TextEditingController(),
+          tapaController: TextEditingController(),
+        ),
+      ),
+    );
+  }
+
+  void _remove(int index) {
+    setState(() {
+      _arrBasicForm.removeAt(index);
+    });
+  }
+
+  void _loadData() async {
+    _prefs = await SharedPreferences.getInstance();
+    List<String> savedData = _prefs.getStringList(_dataKey) ?? [];
+    setState(() {
+      _arrBasicForm.clear();
+      for (String data in savedData) {
+        List<String> values = data.split(':');
+        String trazabilidad = values[0];
+        String fruta = values[1];
+        final focusNode = FocusNode();
+        final newForm = BasicForm(externalOptions, fruta, focusNode);
+        newForm.hasFocus = true;
+        newForm.name.text = trazabilidad;
+        _arrBasicForm.add(newForm);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade200,
+        appBar: AppBar(
+          title: const Text(
+            'Tapas',
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: 'Times New Roman',
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.blue.shade200,
+          shadowColor: Colors.black,
+          elevation: 10,
+          automaticallyImplyLeading: false,
+          actions: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: Image.asset('lib/image/LogoAppBar.png'),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                children: [
+                  const SizedBox(height: 16.0),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        child: Text(
+                          "#",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          "Traz",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          "tapa",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          "Eliminar",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _arrBasicForm.length,
+                    itemBuilder: (context, index) {
+                      final form = _arrBasicForm[index];
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                            child: Text("${index + 1}"),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: TextField(
+                              controller: form.name,
+                              keyboardType: TextInputType.number,
+                              focusNode: form.focusNode,
+                              autofocus:
+                                  currentFocusIndex == index && form.hasFocus,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: DropdownButton<String>(
+                              value: form.getSelectedValue,
+                              items: form.getOptions.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  form.setSelectedValue(value!);
+                                  _lastSelectedValue = value;
+                                });
+                              },
+                              isExpanded: true,
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: IconButton(
+                              onPressed: () {
+                                _remove(index);
+                              },
+                              icon: const Icon(Icons.delete),
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  FloatingActionButton(
+                    heroTag: 'btn3',
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Información'),
+                            content: const Text('¿Desea eliminar información?'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text("Cancelar"),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _clearAll();
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Eliminar'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: const Icon(Icons.delete),
+                  ),
+                  FloatingActionButton(
+                    heroTag: 'btn1',
+                    onPressed: _add,
+                    tooltip: 'Increment',
+                    child: const Icon(Icons.add),
+                  ),
+                  FloatingActionButton(
+                    heroTag: 'btn2',
+                    onPressed: () => _send(context),
+                    child: const Icon(Icons.send),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
