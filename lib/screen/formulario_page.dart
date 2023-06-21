@@ -74,6 +74,8 @@ class _FormularioPageState extends State<FormularioPage> {
   String? selectedOption = '';
   // bool _isFirstCodeEntered = false;
   bool _autoBarcodeInput = false;
+  late var _focusNode = FocusNode();
+  Timer? _focusTimer;
 
   //List<String> _savedSummaryList = [];
   //Datos para exportar excel y funciones
@@ -276,12 +278,44 @@ class _FormularioPageState extends State<FormularioPage> {
   @override
   void initState() {
     super.initState();
+
+    // Crear el objeto FocusNode
+    _focusNode = FocusNode();
+
+    // Resto del código del initState
     _loadDataList();
     _loadSummaryList();
     _initSharedPreferences().then((_) {
       _loadData();
     });
     _loadSavedValues();
+
+    // _focusTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
+    //   _focusNode.requestFocus(); // Mantiene el enfoque en el campo de texto
+    // });
+
+    _textEditingController.addListener(addCodeAutomatically);
+  }
+
+  void addCodeAutomatically() {
+    final enteredCode = _textEditingController.text;
+    if (enteredCode.length == 4) {
+      if (!_autoBarcodeInput) {
+        _addDataToList(enteredCode);
+        _textEditingController.clear();
+      } else {
+        _autoBarcodeInput = false;
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _textEditingController.removeListener(addCodeAutomatically);
+    _textEditingController.dispose();
+    _focusTimer?.cancel();
+    super.dispose();
   }
 
   Future<void> _saveValues() async {
@@ -586,19 +620,31 @@ class _FormularioPageState extends State<FormularioPage> {
                   children: [
                     TextFormField(
                       autofocus: true,
+                      focusNode: _focusNode,
                       controller: _textEditingController,
                       keyboardType: TextInputType.number,
                       onChanged: (enteredCode) {
-                        _currentCode = enteredCode;
-                        if (enteredCode.length == 4) {
-                          if (!_autoBarcodeInput) {
+                        setState(() {
+                          _currentCode = enteredCode;
+                          if (enteredCode.length == 4) {
                             _addDataToList(_currentCode);
                             _currentCode = '';
                             _textEditingController.clear();
-                          } else {
-                            _autoBarcodeInput = true;
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (!_autoBarcodeInput) {
+                                FocusScope.of(context).requestFocus(_focusNode);
+                              } else {
+                                _autoBarcodeInput = false;
+                              }
+                            });
                           }
-                        }
+                        });
+
+                        // Mantener el enfoque en el campo de texto
+                        Timer(const Duration(milliseconds: 200), () {
+                          _focusNode.requestFocus();
+                        });
                       },
                       decoration: const InputDecoration(
                         labelText: 'Ingrese IBM',
@@ -686,42 +732,52 @@ class _FormularioPageState extends State<FormularioPage> {
                       }
                       // summaryList.add('Total cajas : ${_dataList.length}');
                       showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Información de Cajas'),
-                              content: Column(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Información de Cajas'),
+                            content: SingleChildScrollView(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height * 0.5,
+                                ),
+                                child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: summaryList
                                       .map((summary) => Text(summary))
-                                      .toList()),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cerrar'),
+                                      .toList(),
                                 ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      contadorBotonGuardar++;
-                                      _summaryList.addAll(summaryList);
-                                      _saveSummaryList(_summaryList);
-                                      _clearDataList();
-                                      trazabilidadController.clear();
-                                      tapaController.clear();
-                                      _textEditingController.clear();
-                                      // placaController.clear();
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Guardar'),
-                                )
-                              ],
-                            );
-                          });
+                              ),
+                            ),
+                            actions: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Cerrar'),
+                              ),
+                              ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    contadorBotonGuardar++;
+                                    _summaryList.addAll(summaryList);
+                                    _saveSummaryList(_summaryList);
+                                    _clearDataList();
+                                    trazabilidadController.clear();
+                                    tapaController.clear();
+                                    _textEditingController.clear();
+                                    // placaController.clear();
+                                  });
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Guardar'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     },
                     child: const Text('Resumen'),
                   ),

@@ -13,9 +13,18 @@ class TapasPage extends StatefulWidget {
 class _MyTapasPageState extends State<TapasPage> {
   final List<BasicForm> _arrBasicForm = [];
   String _lastSelectedValue = '';
+  final bool _isLastForm = false;
 
   late SharedPreferences _prefs;
   final String _dataKey = 'myDataKey';
+
+  void _checkTextFieldValue(BasicForm form) {
+    if (form.name.text.length == 20) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _add();
+      });
+    }
+  }
 
   //Opciones para el ComboBox
   List<String> externalOptions = [
@@ -36,13 +45,15 @@ class _MyTapasPageState extends State<TapasPage> {
 
   void _add() async {
     final focusNode = FocusNode();
-    final newForm = BasicForm(externalOptions, _lastSelectedValue, focusNode);
-    newForm.hasFocus = true;
+
+    BasicForm form = BasicForm(externalOptions, _lastSelectedValue, focusNode);
+    form.hasFocus = true;
     _arrBasicForm.insert(
-        0, newForm); // Agrega el nuevo formulario al principio de la lista
+        0, form); // Agrega el nuevo formulario al principio de la lista
     currentFocusIndex =
         0; // Establece el enfoque en el nuevo formulario agregado
-    newForm.requestFocus();
+    form.requestFocus();
+    // _arrBasicForm.add(form);
     setState(() {});
   }
 
@@ -201,6 +212,11 @@ class _MyTapasPageState extends State<TapasPage> {
                               focusNode: form.focusNode,
                               autofocus:
                                   currentFocusIndex == index && form.hasFocus,
+                              onChanged: (_) => _checkTextFieldValue(form),
+                              decoration: InputDecoration(
+                                hintText:
+                                    _isLastForm ? 'Nuevo' : form.name.text,
+                              ),
                             ),
                           ),
                           Expanded(

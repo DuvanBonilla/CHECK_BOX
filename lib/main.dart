@@ -12,7 +12,7 @@ class CajasApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Material App Check Box',
+      title: 'Check Box',
       home: PrincipalPage(),
     );
   }

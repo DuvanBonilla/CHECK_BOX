@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:check_box/screen/formulario_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ResumenTrz extends StatefulWidget {
   const ResumenTrz({Key? key}) : super(key: key);
@@ -11,6 +11,9 @@ class ResumenTrz extends StatefulWidget {
 class _ResumenTrzState extends State<ResumenTrz> {
   List<String> _summaryList = [];
   Map<String, int> _sumMap = {};
+  List<String> _filteredSummaryList = [];
+
+  TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
@@ -22,6 +25,7 @@ class _ResumenTrzState extends State<ResumenTrz> {
     final summaryList = await SharedPreferenceHelper.getSummaryList();
     setState(() {
       _summaryList = summaryList;
+      _filteredSummaryList = summaryList;
       _sumMap = _getSumMap(summaryList);
     });
   }
@@ -88,11 +92,26 @@ class _ResumenTrzState extends State<ResumenTrz> {
     });
   }
 
+  void _filterSummaryList(String searchQuery) {
+    setState(() {
+      if (searchQuery.isNotEmpty) {
+        _filteredSummaryList = _summaryList
+            .where((summary) =>
+                summary.contains(searchQuery.toLowerCase()) ||
+                summary.contains(searchQuery.toUpperCase()))
+            .toList();
+      } else {
+        _filteredSummaryList = _summaryList;
+      }
+      _sumMap = _getSumMap(_filteredSummaryList);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Widget> expansionTiles = [];
-    if (_summaryList.isNotEmpty) {
-      final ibmsSet = _summaryList.map((summary) {
+    if (_filteredSummaryList.isNotEmpty) {
+      final ibmsSet = _filteredSummaryList.map((summary) {
         final parts = summary.split(' : ');
         return parts[3];
       }).toSet();
@@ -102,7 +121,7 @@ class _ResumenTrzState extends State<ResumenTrz> {
       ibmList.forEach((traza) {
         final List<Widget> tapasColumns = [];
 
-        final tapasSet = _summaryList.map((summary) {
+        final tapasSet = _filteredSummaryList.map((summary) {
           final parts = summary.split(' : ');
           return parts[4];
         }).toSet();
@@ -213,28 +232,44 @@ class _ResumenTrzState extends State<ResumenTrz> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              if (_summaryList.isNotEmpty)
-                Column(
-                  children: expansionTiles,
-                )
-              else
-                Container(
-                  height: 200,
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'No hay datos disponibles.',
-                    style: TextStyle(
-                      fontFamily: "Times New Roman",
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: _searchController,
+                  onChanged: _filterSummaryList,
+                  decoration: InputDecoration(
+                    labelText: 'Buscar traza',
+                    border: OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        _searchController.clear();
+                        _filterSummaryList('');
+                      },
+                      icon: const Icon(Icons.clear),
                     ),
                   ),
                 ),
+              ),
+              if (expansionTiles.isNotEmpty) ...expansionTiles else const SizedBox(),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class SharedPreferenceHelper {
+  static const String _keySummaryList = 'summaryList';
+
+  static Future<List<String>> getSummaryList() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String>? summaryList = prefs.getStringList(_keySummaryList);
+    return summaryList ?? [];
+  }
+
+  static Future<void> saveSummaryList(List<String> summaryList) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_keySummaryList, summaryList);
   }
 }
