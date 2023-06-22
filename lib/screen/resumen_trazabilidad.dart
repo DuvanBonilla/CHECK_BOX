@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:check_box/screen/formulario_page.dart';
 
 class ResumenTrz extends StatefulWidget {
   const ResumenTrz({Key? key}) : super(key: key);
@@ -69,7 +69,7 @@ class _ResumenTrzState extends State<ResumenTrz> {
     return data;
   }
 
-  void _editData(String traza, String tapa, int newValue) {
+  void _editData(String traza, String tapa, String primerdato, int newValue) {
     setState(() {
       final newData = '$newValue';
       for (var i = 0; i < _summaryList.length; i++) {
@@ -77,8 +77,11 @@ class _ResumenTrzState extends State<ResumenTrz> {
         final parts = summary.split(' : ');
         final summaryTraza = parts[3];
         final summaryTapa = parts[4];
+        final firstData = parts[0];
 
-        if (summaryTraza == traza && summaryTapa == tapa) {
+        if (summaryTraza == traza &&
+            summaryTapa == tapa &&
+            firstData == primerdato) {
           parts[1] = newData;
           _summaryList[i] = parts.join(' : ');
           break;
@@ -144,7 +147,8 @@ class _ResumenTrzState extends State<ResumenTrz> {
                     initialValue: secondData,
                     keyboardType: TextInputType.number,
                     onChanged: (newValue) {
-                      _editData(traza, tapa, int.tryParse(newValue) ?? 0);
+                      _editData(
+                          traza, tapa, firstData, int.tryParse(newValue) ?? 0);
                     },
                   ),
                 ),
@@ -245,31 +249,33 @@ class _ResumenTrzState extends State<ResumenTrz> {
                         _searchController.clear();
                         _filterSummaryList('');
                       },
-                      icon: const Icon(Icons.clear),
+                      icon: Icon(Icons.clear),
                     ),
                   ),
                 ),
               ),
-              if (expansionTiles.isNotEmpty) ...expansionTiles else const SizedBox(),
+              if (_filteredSummaryList.isNotEmpty)
+                Column(
+                  children: expansionTiles,
+                )
+              else
+                Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  child: const Text(
+                    'No hay datos disponibles.',
+                    style: TextStyle(
+                      fontFamily: "Times New Roman",
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
       ),
     );
-  }
-}
-
-class SharedPreferenceHelper {
-  static const String _keySummaryList = 'summaryList';
-
-  static Future<List<String>> getSummaryList() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final List<String>? summaryList = prefs.getStringList(_keySummaryList);
-    return summaryList ?? [];
-  }
-
-  static Future<void> saveSummaryList(List<String> summaryList) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_keySummaryList, summaryList);
   }
 }

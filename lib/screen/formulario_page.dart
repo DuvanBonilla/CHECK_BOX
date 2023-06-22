@@ -736,15 +736,11 @@ class _FormularioPageState extends State<FormularioPage> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: const Text('Información de Cajas'),
-                            content: SingleChildScrollView(
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height * 0.5,
-                                ),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
+                            content: Container(
+                              width: double
+                                  .maxFinite, // Establecer el ancho máximo
+                              child: SingleChildScrollView(
+                                child: ListBody(
                                   children: summaryList
                                       .map((summary) => Text(summary))
                                       .toList(),
@@ -769,6 +765,8 @@ class _FormularioPageState extends State<FormularioPage> {
                                     tapaController.clear();
                                     _textEditingController.clear();
                                     // placaController.clear();
+
+                                    print(_summaryList);
                                   });
                                   Navigator.of(context).pop();
                                 },
