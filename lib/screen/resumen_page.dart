@@ -90,13 +90,29 @@ class _ResumenPageState extends State<ResumenPage> {
 
         tapasList.forEach((tapa) {
           final List<String> data = getDataByPlacaAndTapa(placa, tapa);
-          final List<Widget> dataList = data.map((entry) {
-            final parts = entry.split(' : ');
-            final firstData = parts[0];
-            final secondData = parts[1];
+        final Map<String, int> secondDataMap = {};
 
-            return Text('$firstData : $secondData');
-          }).toList();
+  data.forEach((entry) {
+    final parts = entry.split(' : ');
+    final firstData = parts[0];
+    final secondData = int.tryParse(parts[1]) ?? 0;
+
+    final association = '$firstData:$tapa';
+
+    if (secondDataMap.containsKey(association)) {
+      secondDataMap[association] = secondDataMap[association]! + secondData;
+    } else {
+      secondDataMap[association] = secondData;
+    }
+  });
+
+  final List<Widget> dataList = secondDataMap.entries.map((entry) {
+    final parts = entry.key.split(':');
+    final firstData = parts[0];
+    final combinedSecondData = entry.value;
+
+    return Text('$firstData : $combinedSecondData');
+  }).toList();
 
           final int total = _sumMap['$placa:$tapa'] ?? 0;
 
@@ -107,7 +123,7 @@ class _ResumenPageState extends State<ResumenPage> {
               children: [
                 Text(
                   '$tapa  : $total',
-                  style: const TextStyle(
+                  style: const TextStyle(  
                       fontWeight: FontWeight.bold, color: Colors.black),
                 ),
                 ...dataList,
@@ -159,25 +175,36 @@ class _ResumenPageState extends State<ResumenPage> {
 
       final List<Widget> additionalDataList = tapasSet.map((tapa) {
         final List<Widget> dataList = [];
+        final Map<String, int> secondDataMap = {};
 
         for (final summary in _summaryList) {
           final parts = summary.split(' : ');
-          final currentTapa = parts[4];
+          final posiciontapa = parts[4];
 
-          if (currentTapa == tapa) {
-            final firstData = parts[0];
-            final secondData = parts[1];
-            dataList.add(Text('$firstData : $secondData'));
+          if (posiciontapa == tapa) {
+            final association = '${parts[0]}:$tapa';
+            final secondData = int.tryParse(parts[1]) ?? 0;
+
+            if (secondDataMap.containsKey(association)) {
+              secondDataMap[association] =
+                  secondDataMap[association]! + secondData;
+            } else {
+              secondDataMap[association] = secondData;
+              dataList.add(Text('${parts[0]} : $secondData'));
+            }
           }
         }
 
-        final int total = _summaryList
-            .where((summary) => summary.contains(' : $tapa : '))
-            .map((summary) => int.tryParse(summary.split(' : ')[1]) ?? 0)
-            .fold(
-                0,
-                (previousValue, element) =>
-                    previousValue + element); // Asociado a la tapa en general
+        final int total =
+            secondDataMap.values.fold(0, (sum, repetidos) => sum + repetidos);
+
+        final List<Widget> sumsegundoDataList =
+            secondDataMap.entries.map((entry) {
+          final parts = entry.key.split(':');
+          final firstData = parts[0];
+          final sumasecondData = entry.value;
+          return Text('$firstData : $sumasecondData');
+        }).toList(); // Asociado a la tapa en general
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,7 +216,7 @@ class _ResumenPageState extends State<ResumenPage> {
                 color: Colors.black,
               ),
             ),
-            ...dataList,
+            ...sumsegundoDataList,
           ],
         );
       }).toList();
