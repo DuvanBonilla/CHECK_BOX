@@ -77,7 +77,7 @@ class _FormularioPageState extends State<FormularioPage> {
   late var _focusNode = FocusNode();
   Timer? _focusTimer;
   bool _autoBarcodeInput = false;
-  int dataListCount = 0;
+  int get dataListCount => _dataList.length;
 
   void _addDataToList(String code) async {
     final text = code.trim();
@@ -93,16 +93,13 @@ class _FormularioPageState extends State<FormularioPage> {
       prefs.setStringList('dataList', _dataList);
       await Future.delayed(Duration.zero);
       prefs.setInt('ibmCounter', _ibmCounter);
-      dataListCount++;
       setState(() {});
     }
   }
 
   void _removeDataFromList(int index) async {
     _dataList.removeAt(index);
-    setState(() {
-      dataListCount--;
-    });
+    setState(() {});
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList('dataList', _dataList);
@@ -111,7 +108,6 @@ class _FormularioPageState extends State<FormularioPage> {
   void _clearDataList() async {
     _dataList.clear();
     setState(() {});
-    dataListCount = 0;
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList('dataList', _dataList);
@@ -623,7 +619,11 @@ class _FormularioPageState extends State<FormularioPage> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: Text('Cajas = $dataListCount', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+                      child: Text(
+                        'Cajas = $dataListCount',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
                     ),
                     TextFormField(
                       focusNode: _focusNode,
