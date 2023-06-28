@@ -31,12 +31,11 @@ class _ResumenPageState extends State<ResumenPage> {
     final sumMap = <String, int>{};
 
     for (final summary in summaryList) {
-      final parts = summary.split(' : ');
-      final placa = parts[5];
-      final tapa = parts[4];
+      final placa = summary.split(' : ')[5];
+      final tapa = summary.split(' : ')[4];
       final key = '$placa:$tapa';
 
-      final value = int.tryParse(parts[1]) ?? 0;
+      final value = int.tryParse(summary.split(' : ')[1]) ?? 0;
       sumMap[key] = (sumMap[key] ?? 0) + value;
     }
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-// import 'package:flutter/widgets.dart';
 import 'package:check_box/screen/resumen_ibm.dart';
 import 'package:check_box/screen/resumen_page.dart';
 import 'package:check_box/screen/resumen_trazabilidad.dart';
@@ -72,18 +71,13 @@ class _FormularioPageState extends State<FormularioPage> {
   String _currentCode = '';
   int _ibmCounter = 0;
   String? selectedOption = '';
-  // bool _isFirstCodeEntered = false;
-  bool _autoBarcodeInput = false;
+  final List<String> _dataList = [];
+  final List<String> _summaryList = [];
+  final TextEditingController _textEditingController = TextEditingController();
   late var _focusNode = FocusNode();
   Timer? _focusTimer;
-
-  //List<String> _savedSummaryList = [];
-  //Datos para exportar excel y funciones
-  final List<String> _dataList = [];
-  final List<String> _summaryList =
-      []; //Entrada de datos final para exportar a excel
-  final FocusNode focusNode = FocusNode();
-  final TextEditingController _textEditingController = TextEditingController();
+  bool _autoBarcodeInput = false;
+  int dataListCount = 0;
 
   void _addDataToList(String code) async {
     final text = code.trim();
@@ -99,13 +93,16 @@ class _FormularioPageState extends State<FormularioPage> {
       prefs.setStringList('dataList', _dataList);
       await Future.delayed(Duration.zero);
       prefs.setInt('ibmCounter', _ibmCounter);
+      dataListCount++;
       setState(() {});
     }
   }
 
   void _removeDataFromList(int index) async {
     _dataList.removeAt(index);
-    setState(() {});
+    setState(() {
+      dataListCount--;
+    });
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList('dataList', _dataList);
@@ -114,6 +111,7 @@ class _FormularioPageState extends State<FormularioPage> {
   void _clearDataList() async {
     _dataList.clear();
     setState(() {});
+    dataListCount = 0;
 
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList('dataList', _dataList);
@@ -206,20 +204,20 @@ class _FormularioPageState extends State<FormularioPage> {
     sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: 0))
         .value = 'TOTAL/IBM';
+    // sheetObject
+    //     .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0))
+    //     .value = 'TOTAL/CAJAS';
     sheetObject
         .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: 0))
-        .value = 'TOTAL/CAJAS';
-    sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0))
         .value = 'TRAZABILIDAD';
     sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0))
+        .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: 0))
         .value = 'TAPAS';
     sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0))
+        .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: 0))
         .value = 'PLACA';
     sheetObject
-        .cell(CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: 0))
+        .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: 0))
         .value = 'CONSECUTIVO';
 
     //   Agregar los datos a la hoja de cálculo
@@ -245,20 +243,20 @@ class _FormularioPageState extends State<FormularioPage> {
       sheetObject
           .cell(CellIndex.indexByColumnRow(columnIndex: 4, rowIndex: RowIndex))
           .value = summaryValues[1].trim();
+      // sheetObject
+      //     .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: RowIndex))
+      //     .value = summaryValues[2].trim();
       sheetObject
           .cell(CellIndex.indexByColumnRow(columnIndex: 5, rowIndex: RowIndex))
-          .value = summaryValues[2].trim();
-      sheetObject
-          .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: RowIndex))
           .value = summaryValues[3].trim();
       sheetObject
-          .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: RowIndex))
+          .cell(CellIndex.indexByColumnRow(columnIndex: 6, rowIndex: RowIndex))
           .value = summaryValues[4].trim();
       sheetObject
-          .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: RowIndex))
+          .cell(CellIndex.indexByColumnRow(columnIndex: 7, rowIndex: RowIndex))
           .value = summaryValues[5].trim();
       sheetObject
-          .cell(CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: RowIndex))
+          .cell(CellIndex.indexByColumnRow(columnIndex: 8, rowIndex: RowIndex))
           .value = summaryValues[6].trim();
 
       RowIndex++;
@@ -278,22 +276,12 @@ class _FormularioPageState extends State<FormularioPage> {
   @override
   void initState() {
     super.initState();
-
-    // Crear el objeto FocusNode
-    _focusNode = FocusNode();
-
-    // Resto del código del initState
     _loadDataList();
     _loadSummaryList();
     _initSharedPreferences().then((_) {
       _loadData();
     });
     _loadSavedValues();
-
-    // _focusTimer = Timer.periodic(const Duration(milliseconds: 200), (timer) {
-    //   _focusNode.requestFocus(); // Mantiene el enfoque en el campo de texto
-    // });
-
     _textEditingController.addListener(addCodeAutomatically);
   }
 
@@ -452,6 +440,21 @@ class _FormularioPageState extends State<FormularioPage> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: Image.asset('lib/image/LogoAppBar.png'),
+            ),
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => FormularioPage(
+                      dataList: [], // Reemplaza con la lista de datos adecuada
+                      tapaController: TextEditingController(),
+                      placaController: TextEditingController(),
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -618,9 +621,13 @@ class _FormularioPageState extends State<FormularioPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text('Cajas = $dataListCount', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),),
+                    ),
                     TextFormField(
-                      autofocus: true,
                       focusNode: _focusNode,
+                      autofocus: true,
                       controller: _textEditingController,
                       keyboardType: TextInputType.number,
                       onChanged: (enteredCode) {
@@ -657,7 +664,6 @@ class _FormularioPageState extends State<FormularioPage> {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            focusNode.requestFocus();
                             // _addDataToList();
                             _addDataToList(_currentCode);
                             _currentCode = '';
@@ -732,50 +738,42 @@ class _FormularioPageState extends State<FormularioPage> {
                       }
                       // summaryList.add('Total cajas : ${_dataList.length}');
                       showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Información de Cajas'),
-                            content: Container(
-                              width: double
-                                  .maxFinite, // Establecer el ancho máximo
-                              child: SingleChildScrollView(
-                                child: ListBody(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Información de Cajas'),
+                              content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: summaryList
                                       .map((summary) => Text(summary))
-                                      .toList(),
+                                      .toList()),
+                              actions: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Cerrar'),
                                 ),
-                              ),
-                            ),
-                            actions: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Cerrar'),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    contadorBotonGuardar++;
-                                    _summaryList.addAll(summaryList);
-                                    _saveSummaryList(_summaryList);
-                                    _clearDataList();
-                                    trazabilidadController.clear();
-                                    tapaController.clear();
-                                    _textEditingController.clear();
-                                    // placaController.clear();
-
-                                    print(_summaryList);
-                                  });
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Guardar'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      contadorBotonGuardar++;
+                                      _summaryList.addAll(summaryList);
+                                      _saveSummaryList(_summaryList);
+                                      _clearDataList();
+                                      trazabilidadController.clear();
+                                      tapaController.clear();
+                                      _textEditingController.clear();
+                                      // placaController.clear();
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text('Guardar'),
+                                )
+                              ],
+                            );
+                          });
                     },
                     child: const Text('Resumen'),
                   ),
