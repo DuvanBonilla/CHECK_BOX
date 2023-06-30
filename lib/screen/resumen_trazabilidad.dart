@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:check_box/screen/formulario_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+
 
 class ResumenTrz extends StatefulWidget {
   const ResumenTrz({Key? key}) : super(key: key);
@@ -12,23 +15,43 @@ class _ResumenTrzState extends State<ResumenTrz> {
   List<String> _summaryList = [];
   Map<String, int> _sumMap = {};
   List<String> _filteredSummaryList = [];
+  late Map<String, bool> _isCheckedMap = {};
 
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+
+void _loadSummaryList() async {
+  final summaryList = await SharedPreferenceHelper.getSummaryList();
+  setState(() {
+    _summaryList = summaryList;
+    _filteredSummaryList = summaryList;
+    _sumMap = _getSumMap(summaryList);
+  });
+}
 
   @override
-  void initState() {
-    super.initState();
-    _loadSummaryList();
-  }
+void initState() {
+  super.initState();
+  _loadSummaryList();
+  _loadCheckedStateMap(); // Cargar el estado del checkbox al inicio
+}
 
-  void _loadSummaryList() async {
-    final summaryList = await SharedPreferenceHelper.getSummaryList();
-    setState(() {
-      _summaryList = summaryList;
-      _filteredSummaryList = summaryList;
-      _sumMap = _getSumMap(summaryList);
-    });
-  }
+Future<void> _loadCheckedStateMap() async {
+  final prefs = await SharedPreferences.getInstance();
+  setState(() {
+    final checkedStateMapJson = prefs.getString('checkedStateMap');
+    if (checkedStateMapJson != null) {
+      final checkedStateMap = Map<String, dynamic>.from(jsonDecode(checkedStateMapJson));
+      _isCheckedMap = checkedStateMap.map((key, value) => MapEntry(key, value as bool));
+    }
+  });
+}
+
+Future<void> _saveCheckedStateMap() async {
+  final prefs = await SharedPreferences.getInstance();
+  final checkedStateMapJson = jsonEncode(_isCheckedMap);
+  await prefs.setString('checkedStateMap', checkedStateMapJson);
+}
+
 
   Map<String, int> _getSumMap(List<String> summaryList) {
     final sumMap = <String, int>{};
@@ -186,11 +209,24 @@ class _ResumenTrzState extends State<ResumenTrz> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  '$traza  :  $totalSum',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                Checkbox(
+                  value: _isCheckedMap[traza] ?? false,
+                  onChanged: (value) {
+                    setState(() {
+                      _isCheckedMap[traza] =
+                          value ?? false; // Actualiza el estado de selección
+                           _saveCheckedStateMap();
+                    });
+                  },
+                ),
+                Container(
+                  color: _isCheckedMap[traza] ?? false ? Colors.green : null,
+                  child: Text(
+                    '$traza  :  $totalSum',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ],
@@ -243,13 +279,13 @@ class _ResumenTrzState extends State<ResumenTrz> {
                   onChanged: _filterSummaryList,
                   decoration: InputDecoration(
                     labelText: 'Buscar traza',
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       onPressed: () {
                         _searchController.clear();
                         _filterSummaryList('');
                       },
-                      icon: Icon(Icons.clear),
+                      icon: const Icon(Icons.clear),
                     ),
                   ),
                 ),
