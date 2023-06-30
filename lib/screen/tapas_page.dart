@@ -142,55 +142,63 @@ class _MyTapasPageState extends State<TapasPage> {
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 children: [
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 5.0),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       SizedBox(
-                        width: 20,
-                        child: Text(
-                          "#",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        width: 15,
+                        child: Center(
+                          child: Text(
+                            "#",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 4,
+                        child: Center(
+                          child: Text(
+                            "Trazabilidad",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
                       Expanded(
                         flex: 2,
-                        child: Text(
-                          "Traz",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        child: Center(
+                          child: Text(
+                            "Tapa",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ),
                       Expanded(
-                        flex: 2,
-                        child: Text(
-                          "tapa",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          "Eliminar",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                        flex: 1,
+                        child: Center(
+                          child: Text(
+                            "Eliminar",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const Divider(),
+                  const Divider(),  
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -201,11 +209,14 @@ class _MyTapasPageState extends State<TapasPage> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           SizedBox(
-                            width: 20,
-                            child: Text("${index + 1}"),
+                            width: 15,
+                            child: Text("${index + 1})",
+                                selectionColor: Colors.red,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
                           ),
                           Expanded(
-                            flex: 2,
+                            flex: 4,
                             child: TextField(
                               controller: form.name,
                               keyboardType: TextInputType.number,
@@ -239,7 +250,7 @@ class _MyTapasPageState extends State<TapasPage> {
                             ),
                           ),
                           Expanded(
-                            flex: 2,
+                            flex: 1,
                             child: IconButton(
                               onPressed: () {
                                 _remove(index);

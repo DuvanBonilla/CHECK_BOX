@@ -10,7 +10,7 @@ class PrincipalPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            'Inicio',
+            'CAJA A CAJA',
             style: TextStyle(
               color: Colors.black,
               fontFamily: 'Times New Roman',
@@ -28,41 +28,46 @@ class PrincipalPage extends StatelessWidget {
             ),
           ],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+        body: Container(
+          width: 500,
+          height: 500,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('lib/image/cargobanlo.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
             children: [
-              const Text(
-                'Caja a Caja',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Times New Roman',
+              Positioned(
+                bottom: 40,
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: IconButton(
+                    icon: const Icon(Icons.send_rounded),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const TapasPage(),
+                        ),
+                      );
+                    },
+                    iconSize: 48,
+                    color: Colors.blue.shade300,
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 100,
-                height: 100,
-                child: IconButton(
-                  icon: const Icon(Icons.send_rounded),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const TapasPage()),
-                    );
-                  },
-                  iconSize: 48,
-                  color: Colors.blue.shade300,
-                ),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Empezar proceso',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Times New Roman',
+              const Positioned(
+                bottom: 10,
+                child: Text(
+                  'Empezar proceso',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Times New Roman',
+                  ),
                 ),
               ),
             ],
