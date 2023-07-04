@@ -28,49 +28,51 @@ class PrincipalPage extends StatelessWidget {
             ),
           ],
         ),
-        body: Container(
-          width: 500,
-          height: 500,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage('lib/image/cargobanlo.png'),
-              fit: BoxFit.cover,
+        body: FractionallySizedBox(
+          widthFactor: 1.0,
+          heightFactor: 1.0,
+          child: Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('lib/image/cargobanlo.png'),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Positioned(
-                bottom: 40,
-                child: SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: IconButton(
-                    icon: const Icon(Icons.send_rounded),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const TapasPage(),
-                        ),
-                      );
-                    },
-                    iconSize: 48,
-                    color: Colors.blue.shade300,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Positioned(
+                  bottom: 40,
+                  child: SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: IconButton(
+                      icon: const Icon(Icons.send_rounded),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const TapasPage(),
+                          ),
+                        );
+                      },
+                      iconSize: 48,
+                      color: Colors.blue.shade300,
+                    ),
                   ),
                 ),
-              ),
-              const Positioned(
-                bottom: 10,
-                child: Text(
-                  'Empezar proceso',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontFamily: 'Times New Roman',
+                const Positioned(
+                  bottom: 10,
+                  child: Text(
+                    'Empezar proceso',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontFamily: 'Times New Roman',
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
