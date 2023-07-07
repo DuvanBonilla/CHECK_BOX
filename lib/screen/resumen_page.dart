@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:check_box/screen/formulario_page.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class ResumenPage extends StatefulWidget {
   const ResumenPage({Key? key}) : super(key: key);
@@ -266,19 +267,19 @@ class _ResumenPageState extends State<ResumenPage> {
           title: const Text(
             'Informe de Operación',
             style: TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontFamily: 'Times New Roman',
               fontWeight: FontWeight.w500,
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.blue.shade200,
+          backgroundColor: HexColor('1f2352'),
           shadowColor: Colors.black,
           elevation: 10,
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
-              child: Image.asset('lib/image/LogoAppBar.png'),
+              child: Image.asset('lib/image/LogoBlanco.png'),
             ),
           ],
         ),

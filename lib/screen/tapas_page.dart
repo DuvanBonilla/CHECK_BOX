@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import '../class/basic_form.dart';
 import 'formulario_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -121,20 +122,20 @@ class _MyTapasPageState extends State<TapasPage> {
           title: const Text(
             'Tapas',
             style: TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontFamily: 'Times New Roman',
               fontWeight: FontWeight.w500,
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.blue.shade200,
+          backgroundColor: HexColor('1f2352'),
           shadowColor: Colors.black,
           elevation: 10,
           automaticallyImplyLeading: false,
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
-              child: Image.asset('lib/image/LogoAppBar.png'),
+              child: Image.asset('lib/image/LogoBlanco.png'),
             ),
           ],
         ),
@@ -198,7 +199,7 @@ class _MyTapasPageState extends State<TapasPage> {
                       ),
                     ],
                   ),
-                  const Divider(),  
+                  const Divider(),
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -272,28 +273,71 @@ class _MyTapasPageState extends State<TapasPage> {
                 children: [
                   FloatingActionButton(
                     heroTag: 'btn3',
+                    backgroundColor: HexColor('1f2352'),
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text('Información'),
-                            content: const Text('¿Desea eliminar información?'),
-                            actions: <Widget>[
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text("Cancelar"),
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    'Atención',
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20.0),
+                                  const Text(
+                                    '¿Desea eliminar información?',
+                                    style: TextStyle(
+                                      fontSize: 18.0,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20.0),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: const Text(
+                                          'Cancelar',
+                                          style: TextStyle(
+                                            fontSize: 18.0,
+                                            color: Colors.green,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10.0),
+                                      TextButton(
+                                          onPressed: () {
+                                            _clearAll();
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text(
+                                            'Eliminar',
+                                            style: TextStyle(
+                                              fontSize: 18.0,
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ))
+                                    ],
+                                  ),
+                                ],
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  _clearAll();
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Eliminar'),
-                              ),
-                            ],
+                            ),
                           );
                         },
                       );
@@ -302,12 +346,14 @@ class _MyTapasPageState extends State<TapasPage> {
                   ),
                   FloatingActionButton(
                     heroTag: 'btn1',
+                    backgroundColor: HexColor('1f2352'),
                     onPressed: _add,
                     tooltip: 'Increment',
                     child: const Icon(Icons.add),
                   ),
                   FloatingActionButton(
                     heroTag: 'btn2',
+                    backgroundColor: HexColor('1f2352'),
                     onPressed: () => _send(context),
                     child: const Icon(Icons.send),
                   ),

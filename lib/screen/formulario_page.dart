@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:check_box/screen/resumen_general.dart';
 import 'package:check_box/screen/resumen_ibm.dart';
 import 'package:check_box/screen/resumen_page.dart';
 import 'package:check_box/screen/resumen_trazabilidad.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:excel/excel.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
 import 'package:intl/intl.dart';
@@ -24,6 +26,10 @@ class FormularioPage extends StatefulWidget {
   late final TextEditingController placaController;
   @override
   State<FormularioPage> createState() => _FormularioPageState();
+
+  void clearSummaryList() {}
+
+  // void _clearSummaryList() {}
 }
 
 class SharedPreferenceHelper {
@@ -78,6 +84,7 @@ class _FormularioPageState extends State<FormularioPage> {
   Timer? _focusTimer;
   bool _autoBarcodeInput = false;
   int get dataListCount => _dataList.length;
+  late SharedPreferences _prefs;
 
   void _addDataToList(String code) async {
     final text = code.trim();
@@ -119,41 +126,9 @@ class _FormularioPageState extends State<FormularioPage> {
     if (summaryList != null) {
       setState(() {
         _summaryList.addAll(summaryList);
-        contadorBotonGuardar = 1;
+        // contadorBotonGuardar = 1;
       });
     }
-  }
-
-  void _clearSummaryList() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Atención'),
-          content: const Text('¿Está Seguro de Elimiar el Resumen?'),
-          actions: [
-            TextButton(
-              child: const Text('NO'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('SÍ'),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.remove('summaryList');
-                setState(() {
-                  _summaryList.clear();
-                  contadorBotonGuardar = 1;
-                });
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Map<String, int> _getDataCount() {
@@ -368,6 +343,9 @@ class _FormularioPageState extends State<FormularioPage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: HexColor('1f2352'), // Color con HexColor
+                ),
                 onPressed: () {
                   Navigator.pop(context); // Cierra el diálogo
                   Navigator.push(
@@ -381,6 +359,9 @@ class _FormularioPageState extends State<FormularioPage> {
               ),
               const SizedBox(width: 16, height: 16),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: HexColor('1f2352'), // Color con HexColor
+                ),
                 onPressed: () {
                   Navigator.pop(context); // Cierra el diálogo
                   Navigator.push(
@@ -394,6 +375,9 @@ class _FormularioPageState extends State<FormularioPage> {
               ),
               const SizedBox(width: 16, height: 16),
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: HexColor('1f2352'), // Color con HexColor
+                ),
                 onPressed: () {
                   Navigator.pop(context); // Cierra el diálogo
                   Navigator.push(
@@ -405,6 +389,22 @@ class _FormularioPageState extends State<FormularioPage> {
                 },
                 child: const Text('IBM'),
               ),
+              const SizedBox(width: 16, height: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: HexColor('1f2352'), // Color con HexColor
+                ),
+                onPressed: () {
+                  Navigator.pop(context); // Cierra el diálogo
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ResumenGeneral(),
+                    ),
+                  );
+                },
+                child: const Text('Resumen General'),
+              ),
             ],
           ),
         );
@@ -412,7 +412,6 @@ class _FormularioPageState extends State<FormularioPage> {
     );
   }
 
-  late SharedPreferences _prefs;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -423,19 +422,19 @@ class _FormularioPageState extends State<FormularioPage> {
           title: const Text(
             'Formulario',
             style: TextStyle(
-              color: Colors.black,
+              color: Colors.white,
               fontFamily: 'Times New Roman',
               fontWeight: FontWeight.w500,
             ),
           ),
           centerTitle: true,
-          backgroundColor: Colors.blue.shade200,
+          backgroundColor: HexColor('1f2352'),
           shadowColor: Colors.black,
           elevation: 10,
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
-              child: Image.asset('lib/image/LogoAppBar.png'),
+              child: Image.asset('lib/image/LogoBlanco.png'),
             ),
             IconButton(
               icon: Icon(Icons.refresh),
@@ -613,7 +612,7 @@ class _FormularioPageState extends State<FormularioPage> {
               // Podemos iniciar acá el ingreso de datos para el excel
 
               Padding(
-                padding: const EdgeInsets.all(36.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -663,6 +662,9 @@ class _FormularioPageState extends State<FormularioPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: HexColor('1f2352'), // Color con HexColor
+                          ),
                           onPressed: () {
                             // _addDataToList();
                             _addDataToList(_currentCode);
@@ -672,8 +674,11 @@ class _FormularioPageState extends State<FormularioPage> {
                         ),
                         const SizedBox(height: 16.0),
                         ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: HexColor('1f2352'), // Color con HexColor
+                          ),
                           onPressed: _exportToExcel,
-                          child: const Text('Exportar a Excel'),
+                          child: const Text('Exportar Excel'),
                         ),
                       ],
                     ),
@@ -725,10 +730,16 @@ class _FormularioPageState extends State<FormularioPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: HexColor('1f2352'), // Color con HexColor
+                    ),
                     onPressed: _clearDataList,
                     child: const Text('Borrar Todo'),
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: HexColor('1f2352'), // Color con HexColor
+                    ),
                     onPressed: () {
                       final countMap = _getDataCount();
                       final summaryList = <String>[];
@@ -738,42 +749,83 @@ class _FormularioPageState extends State<FormularioPage> {
                       }
                       // summaryList.add('Total cajas : ${_dataList.length}');
                       showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: const Text('Información de Cajas'),
-                              content: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: summaryList
-                                      .map((summary) => Text(summary))
-                                      .toList()),
-                              actions: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Cerrar'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      contadorBotonGuardar++;
-                                      _summaryList.addAll(summaryList);
-                                      _saveSummaryList(_summaryList);
-                                      _clearDataList();
-                                      trazabilidadController.clear();
-                                      tapaController.clear();
-                                      _textEditingController.clear();
-                                      // placaController.clear();
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: const Text('Guardar'),
-                                )
-                              ],
-                            );
-                          });
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                            child: Container(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Información de Cajas',
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16.0),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: summaryList
+                                        .map(
+                                          (summary) => Text(
+                                            summary,
+                                            style:
+                                                const TextStyle(fontSize: 16.0),
+                                          ),
+                                        )
+                                        .toList(),
+                                  ),
+                                  const SizedBox(height: 24.0),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: HexColor(
+                                              '1f2352'), // Color con HexColor
+                                        ),
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .pop(); // Cerrar el diálogo
+                                        },
+                                        child: const Text('Cerrar'),
+                                      ),
+                                      const SizedBox(width: 10.0),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            contadorBotonGuardar++;
+                                            _summaryList.addAll(summaryList);
+                                            _saveSummaryList(_summaryList);
+                                            _clearDataList();
+                                            trazabilidadController.clear();
+                                            tapaController.clear();
+                                            _textEditingController.clear();
+                                            // placaController.clear();
+                                          });
+                                          Navigator.of(context).pop();
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          primary: HexColor(
+                                              '1f2352'), // Color con HexColor
+                                        ),
+                                        child: const Text('Guardar'),
+                                      )
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
                     },
                     child: const Text('Resumen'),
                   ),
@@ -782,29 +834,29 @@ class _FormularioPageState extends State<FormularioPage> {
               const SizedBox(
                 height: 16.0,
               ),
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: _summaryList.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Center(
-                      child: Text(_summaryList[index]),
-                    ),
-                  );
-                },
-              ),
+              // ListView.builder(
+              //   physics: const NeverScrollableScrollPhysics(),
+              //   scrollDirection: Axis.vertical,
+              //   shrinkWrap: true,
+              //   itemCount: _summaryList.length,
+              //   itemBuilder: (BuildContext context, int index) {
+              //     return ListTile(
+              //       title: Center(
+              //         child: Text(_summaryList[index]),
+              //       ),
+              //     );
+              //   },
+              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(
-                    onPressed: _clearSummaryList,
-                    icon: const Icon(Icons.delete_forever),
-                    iconSize: 40,
-                    color: Colors.blue.shade400,
-                  ),
+                  // IconButton(
+                  //   onPressed: _clearSummaryList,
+                  //   icon: const Icon(Icons.delete_forever),
+                  //   iconSize: 40,
+                  //   color: Colors.blue.shade400,
+                  // ),
                   //Eliminar resumen
                   IconButton(
                       onPressed: () {
@@ -812,7 +864,7 @@ class _FormularioPageState extends State<FormularioPage> {
                       },
                       icon: const Icon(Icons.list_alt_rounded),
                       iconSize: 40,
-                      color: Colors.blue.shade400),
+                      color: HexColor('1f2352')),
                 ],
               ),
             ],

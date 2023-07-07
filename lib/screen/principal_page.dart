@@ -1,53 +1,82 @@
-import 'package:flutter/material.dart';
 import 'package:check_box/screen/tapas_page.dart';
+import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class PrincipalPage extends StatelessWidget {
   const PrincipalPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'CAJA A CAJA',
-            style: TextStyle(
-              color: Colors.black,
-              fontFamily: 'Times New Roman',
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.blue.shade200,
-          shadowColor: Colors.black,
-          elevation: 10,
-          actions: <Widget>[
-            Padding(
-              padding: const EdgeInsets.only(right: 16.0),
-              child: Image.asset('lib/image/LogoAppBar.png'),
-            ),
-          ],
-        ),
-        body: FractionallySizedBox(
-          widthFactor: 1.0,
-          heightFactor: 1.0,
-          child: Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('lib/image/cargobanlo.png'),
-                fit: BoxFit.cover,
+    return Scaffold(
+      backgroundColor: HexColor('1f2352'),
+      body: Stack(
+        children: [
+          BuildBackGroundTopCircle(context),
+          BuildBackGroundBottomCircle(context),
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 16,
+                top: 50,
+                bottom: 40,
               ),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  bottom: 40,
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: IconButton(
-                      icon: const Icon(Icons.send_rounded),
+              child: Column(
+                children: [
+                  const Text(
+                    "CAJA A CAJA",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "Calibri",
+                      fontSize: 16,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  Container(
+                    width: 140,
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: HexColor('ffffff'),
+                      borderRadius: BorderRadius.circular(75),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.5),
+                          spreadRadius: 4,
+                          blurRadius: 20,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Image.asset(
+                        'lib/image/LogoAppBar.png',
+                        width: 125,
+                        height: 125,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 150,
+                  ),
+                  const Text(
+                    "Iniciar Proceso",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Calibri',
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+                  Container(
+                    width: 70, // Ajusta el ancho deseado
+                    height: 70, // Ajusta la altura deseada
+                    child: FloatingActionButton(
+                      heroTag: 'ButtomGo',
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -56,20 +85,87 @@ class PrincipalPage extends StatelessWidget {
                           ),
                         );
                       },
-                      iconSize: 48,
-                      color: Colors.blue.shade300,
+                      tooltip: 'Iniciar Proceso',
+                      backgroundColor: HexColor('ffffff'),
+                      elevation: 4,
+                      highlightElevation: 8,
+                      splashColor: Colors.grey,
+                      child: Icon(
+                        Icons.send,
+                        color: HexColor('aecb4b'),
+                        size: 42,
+                      ),
                     ),
                   ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Positioned BuildBackGroundBottomCircle(BuildContext context) {
+    return Positioned(
+      top: 0,
+      child: Transform.translate(
+        offset: Offset(0.0, MediaQuery.of(context).size.width / 0.54),
+        child: Transform.scale(
+          scale: 1.35,
+          child: Container(
+            height: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: HexColor('ffffff'),
+              borderRadius:
+                  BorderRadius.circular(MediaQuery.of(context).size.width),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  spreadRadius: 4,
+                  blurRadius: 20,
                 ),
-                const Positioned(
-                  bottom: 10,
-                  child: Text(
-                    'Empezar proceso',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontFamily: 'Times New Roman',
-                    ),
-                  ),
+              ],
+            ),
+            child: Align(
+              alignment: const Alignment(
+                0,
+                -0.81,
+              ),
+              child: Transform.scale(
+                scale: 0.5,
+                child: Image.asset(
+                  'lib/image/LogoColores.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Positioned BuildBackGroundTopCircle(BuildContext context) {
+    return Positioned(
+      top: 0,
+      child: Transform.translate(
+        offset: Offset(0.0, -MediaQuery.of(context).size.width / 1.4),
+        child: Transform.scale(
+          scale: 1.35,
+          child: Container(
+            height: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: HexColor('ffffff'),
+              borderRadius:
+                  BorderRadius.circular(MediaQuery.of(context).size.width),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  spreadRadius: 4,
+                  blurRadius: 20,
                 ),
               ],
             ),
