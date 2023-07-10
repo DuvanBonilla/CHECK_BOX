@@ -27,7 +27,9 @@ class _ResumenGeneralState extends State<ResumenGeneral> {
     });
   }
 
-  void _refreshPage() {
+  void _refreshPage() async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('contadorBotonGuardar', 1);
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -105,6 +107,7 @@ class _ResumenGeneralState extends State<ResumenGeneral> {
                         Navigator.of(context).pop();
                         final prefs = await SharedPreferences.getInstance();
                         await prefs.remove('summaryList');
+                        await prefs.setInt('contadorBotonGuardar', 0);
                         setState(() {
                           _summaryList.clear();
                           //contadorBotonGuardar = 1;
