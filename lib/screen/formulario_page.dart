@@ -359,7 +359,7 @@ class _FormularioPageState extends State<FormularioPage> {
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary:Colors.green, // Color con HexColor
+                  primary: Colors.green, // Color con HexColor
                 ),
                 onPressed: () {
                   Navigator.pop(context); // Cierra el diálogo
@@ -715,170 +715,174 @@ class _FormularioPageState extends State<FormularioPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text(
-                                          'Información de Cajas',
-                                          style: TextStyle(
-                                            fontSize: 20.0,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 16.0),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: summaryList
-                                              .map(
-                                                (summary) => Text(
-                                                  summary,
-                                                  style: const TextStyle(
-                                                      fontSize: 16.0),
-                                                ),
-                                              )
-                                              .toList(),
-                                        ),
-                                        const SizedBox(height: 24.0),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                primary: HexColor(
-                                                    '1f2352'), // Color con HexColor
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(); // Cerrar el diálogo
-                                              },
-                                              child: const Text('Cerrar'),
+                                  child: SingleChildScrollView(
+                                    child: Container(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(
+                                            'Información de Cajas',
+                                            style: TextStyle(
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            const SizedBox(width: 10.0),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                if (tapaController
-                                                    .text.isEmpty) {
-                                                  // Mostrar aviso de campo vacío
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return Dialog(
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      10.0),
-                                                        ),
-                                                        child: Container(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(20.0),
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              const Text(
-                                                                'Atención',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      20.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
+                                          ),
+                                          const SizedBox(height: 16.0),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: summaryList
+                                                .map(
+                                                  (summary) => Text(
+                                                    summary,
+                                                    style: const TextStyle(
+                                                        fontSize: 16.0),
+                                                  ),
+                                                )
+                                                .toList(),
+                                          ),
+                                          const SizedBox(height: 24.0),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  primary: HexColor(
+                                                      '1f2352'), // Color con HexColor
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(); // Cerrar el diálogo
+                                                },
+                                                child: const Text('Cerrar'),
+                                              ),
+                                              const SizedBox(width: 10.0),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  if (tapaController
+                                                      .text.isEmpty) {
+                                                    // Mostrar aviso de campo vacío
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return Dialog(
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        10.0),
+                                                          ),
+                                                          child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(20.0),
+                                                            child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                const Text(
+                                                                  'Atención',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        20.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  height: 20.0),
-                                                              const Text(
-                                                                'El campo "TAPA" está vacío. Por favor, ingrese la información requerida.',
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize:
-                                                                      18.0,
-                                                                ),
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                              ),
-                                                              const SizedBox(
-                                                                  height: 20.0),
-                                                              ElevatedButton(
-                                                                
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context); // Cerrar el diálogo
-                                                                },
-                                                                child:
-                                                                    const Text(
-                                                                  'OK',
+                                                                const SizedBox(
+                                                                    height:
+                                                                        20.0),
+                                                                const Text(
+                                                                  'El campo "TAPA" está vacío. Por favor, ingrese la información requerida.',
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
                                                                         18.0,
                                                                   ),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
                                                                 ),
-                                                                style: ElevatedButton
-                                                                    .styleFrom(
-                                                                  primary:
-                                                                      Colors
-                                                                          .green,
-                                                                  padding: const EdgeInsets
-                                                                          .symmetric(
+                                                                const SizedBox(
+                                                                    height:
+                                                                        20.0),
+                                                                ElevatedButton(
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.pop(
+                                                                        context); // Cerrar el diálogo
+                                                                  },
+                                                                  child: Text(
+                                                                    'OK',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontSize:
+                                                                          18.0,
+                                                                    ),
+                                                                  ),
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    primary: Colors
+                                                                        .green,
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                            .symmetric(
                                                                       horizontal:
-                                                                          30.0),
-                                                                  shape:
-                                                                      RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            10.0),
+                                                                          30.0,
+                                                                    ),
+                                                                    shape:
+                                                                        RoundedRectangleBorder(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              10.0),
+                                                                    ),
                                                                   ),
                                                                 ),
-                                                              ),
-                                                            ],
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  );
-                                                } else {
-                                                  // Guardar la información
-                                                  setState(() {
-                                                    contadorBotonGuardar++;
-                                                    _saveContadorBotonGuardar(
-                                                        contadorBotonGuardar);
-                                                    _summaryList
-                                                        .addAll(summaryList);
-                                                    _saveSummaryList(
-                                                        _summaryList);
-                                                    _clearDataList();
-                                                    trazabilidadController
-                                                        .clear();
-                                                    tapaController.clear();
-                                                    _textEditingController
-                                                        .clear();
-                                                  });
-                                                  Navigator.of(context)
-                                                      .pop(); // Cerrar el diálogo
-                                                }
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.green,
+                                                        );
+                                                      },
+                                                    );
+                                                  } else {
+                                                    // Guardar la información
+                                                    setState(() {
+                                                      contadorBotonGuardar++;
+                                                      _saveContadorBotonGuardar(
+                                                          contadorBotonGuardar);
+                                                      _summaryList
+                                                          .addAll(summaryList);
+                                                      _saveSummaryList(
+                                                          _summaryList);
+                                                      _clearDataList();
+                                                      trazabilidadController
+                                                          .clear();
+                                                      tapaController.clear();
+                                                      _textEditingController
+                                                          .clear();
+                                                    });
+                                                    Navigator.of(context)
+                                                        .pop(); // Cerrar el diálogo
+                                                  }
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.green,
+                                                ),
+                                                child: const Text('Guardar'),
                                               ),
-                                              child: const Text('Guardar'),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );
