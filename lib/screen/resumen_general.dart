@@ -27,7 +27,7 @@ class _ResumenGeneralState extends State<ResumenGeneral> {
     });
   }
 
-  void _refreshPage() async{
+  void _refreshPage() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('contadorBotonGuardar', 1);
     Navigator.pushReplacement(
@@ -149,26 +149,26 @@ class _ResumenGeneralState extends State<ResumenGeneral> {
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              if (_summaryList.isEmpty)
-                Container(
-                  height: 200,
-                  alignment: Alignment.center,
-                  child: const Text(
-                    'No hay datos disponibles.',
-                    style: TextStyle(
-                      fontFamily: "Times New Roman",
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+        body: Column(
+          children: [
+            if (_summaryList.isEmpty)
+              Container(
+                height: 200,
+                alignment: Alignment.center,
+                child: const Text(
+                  'No hay datos disponibles.',
+                  style: TextStyle(
+                    fontFamily: "Times New Roman",
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                )
-              else
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
+                ),
+              )
+            else
+              Expanded(
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: _summaryList.length,
@@ -180,14 +180,14 @@ class _ResumenGeneralState extends State<ResumenGeneral> {
                     );
                   },
                 ),
-              IconButton(
-                onPressed: _clearSummaryList,
-                icon: const Icon(Icons.delete_forever),
-                iconSize: 40,
-                color: HexColor('1f2352'),
               ),
-            ],
-          ),
+            IconButton(
+              onPressed: _clearSummaryList,
+              icon: const Icon(Icons.delete_forever),
+              iconSize: 40,
+              color: HexColor('1f2352'),
+            ),
+          ],
         ),
       ),
     );

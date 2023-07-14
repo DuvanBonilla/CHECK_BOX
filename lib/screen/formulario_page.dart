@@ -145,11 +145,11 @@ class _FormularioPageState extends State<FormularioPage> {
 
   void _exportToExcel() async {
     final dateTime = DateTime.now();
-    final dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
-    final formattedDateTime = dateFormat.format(dateTime);
+    // final dateFormat = DateFormat('dd/MM/yyyy HH:mm:ss');
+    // final formattedDateTime = dateFormat.format(dateTime);
     final weekNumber = '${dateTime.weekOfYear}';
-    final dateFormatDay = DateFormat.EEEE();
-    final formattedDay = dateFormatDay.format(dateTime);
+    // final dateFormatDay = DateFormat.EEEE();
+    // final formattedDay = dateFormatDay.format(dateTime);
 
     //   Crear un nuevo libro de Excel
     var excel = Excel.createExcel();
@@ -198,15 +198,14 @@ class _FormularioPageState extends State<FormularioPage> {
       final summaryValues = summary.split(':');
       sheetObject
           .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: RowIndex))
-          .value = formattedDateTime;
-
+          .value = summaryValues[7].trim();
       sheetObject
           .cell(CellIndex.indexByColumnRow(columnIndex: 1, rowIndex: RowIndex))
           .value = weekNumber;
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: RowIndex))
-          .value = formattedDay;
+          .value = summaryValues[8].trim();
 
       sheetObject
           .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: RowIndex))
@@ -701,11 +700,18 @@ class _FormularioPageState extends State<FormularioPage> {
                             primary: HexColor('1f2352'), // Color con HexColor
                           ),
                           onPressed: () {
+                            final dateTime = DateTime.now();
+                            final dateFormat =
+                                DateFormat('dd/MM/yyyy HH-mm-ss');
+                            final formattedDateTime =
+                                dateFormat.format(dateTime);
+                            final dateFormatDay = DateFormat.EEEE();
+                            final formattedDay = dateFormatDay.format(dateTime);
                             final countMap = _getDataCount();
                             final summaryList = <String>[];
                             for (final key in countMap.keys) {
                               summaryList.add(
-                                  '$key :  ${countMap[key]} : ${_dataList.length} : ${trazabilidadController.text} : ${tapaController.text} : ${placaController.text} : ${contadorBotonGuardar.toInt()}');
+                                  '$key :  ${countMap[key]} : ${_dataList.length} : ${trazabilidadController.text} : ${tapaController.text} : ${placaController.text} : ${contadorBotonGuardar.toInt()} : ${formattedDateTime.simplifyText()} : ${formattedDay.simplifyText()}');
                             }
                             // summaryList.add('Total cajas : ${_dataList.length}');
                             showDialog(
@@ -715,174 +721,179 @@ class _FormularioPageState extends State<FormularioPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
                                   ),
-                                  child: SingleChildScrollView(
-                                    child: Container(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(
-                                            'Información de Cajas',
-                                            style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold,
+                                  child: Container(
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 600.0,
+                                      maxHeight: 700.0,
+                                    ),
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          'Información de Cajas',
+                                          style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 16.0),
+                                        SingleChildScrollView(
+                                          child: Container(
+                                            height:
+                                                300.0, // Altura fija para el contenido desplazable
+                                            child: ListView.builder(
+                                              shrinkWrap: true,
+                                              itemCount: summaryList.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Text(
+                                                  summaryList[index],
+                                                  style: const TextStyle(
+                                                      fontSize: 16.0),
+                                                );
+                                              },
                                             ),
                                           ),
-                                          const SizedBox(height: 16.0),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: summaryList
-                                                .map(
-                                                  (summary) => Text(
-                                                    summary,
-                                                    style: const TextStyle(
-                                                        fontSize: 16.0),
-                                                  ),
-                                                )
-                                                .toList(),
-                                          ),
-                                          const SizedBox(height: 24.0),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  primary: HexColor(
-                                                      '1f2352'), // Color con HexColor
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.of(context)
-                                                      .pop(); // Cerrar el diálogo
-                                                },
-                                                child: const Text('Cerrar'),
+                                        ),
+                                        const SizedBox(height: 24.0),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                primary: HexColor('1f2352'),
                                               ),
-                                              const SizedBox(width: 10.0),
-                                              ElevatedButton(
-                                                onPressed: () {
-                                                  if (tapaController
-                                                      .text.isEmpty) {
-                                                    // Mostrar aviso de campo vacío
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return Dialog(
-                                                          shape:
-                                                              RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        10.0),
-                                                          ),
-                                                          child: Container(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(20.0),
-                                                            child: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              children: [
-                                                                const Text(
-                                                                  'Atención',
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        20.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  ),
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Cerrar el diálogo
+                                              },
+                                              child: const Text('Cerrar'),
+                                            ),
+                                            const SizedBox(width: 10.0),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                if (tapaController
+                                                    .text.isEmpty) {
+                                                  // Mostrar aviso de campo vacío
+                                                  showDialog(
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return Dialog(
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10.0),
+                                                        ),
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(20.0),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              const Text(
+                                                                'Atención',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      20.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
                                                                 ),
-                                                                const SizedBox(
-                                                                    height:
-                                                                        20.0),
-                                                                const Text(
-                                                                  'El campo "TAPA" está vacío. Por favor, ingrese la información requerida.',
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 20.0),
+                                                              const Text(
+                                                                'El campo "TAPA" está vacío. Por favor, ingrese la información requerida.',
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize:
+                                                                      18.0,
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 20.0),
+                                                              ElevatedButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context); // Cerrar el diálogo
+                                                                },
+                                                                child: Text(
+                                                                  'OK',
                                                                   style:
                                                                       TextStyle(
                                                                     fontSize:
                                                                         18.0,
                                                                   ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .center,
                                                                 ),
-                                                                const SizedBox(
-                                                                    height:
-                                                                        20.0),
-                                                                ElevatedButton(
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.pop(
-                                                                        context); // Cerrar el diálogo
-                                                                  },
-                                                                  child: Text(
-                                                                    'OK',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontSize:
-                                                                          18.0,
-                                                                    ),
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  primary: Colors
+                                                                      .green,
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .symmetric(
+                                                                    horizontal:
+                                                                        30.0,
                                                                   ),
-                                                                  style: ElevatedButton
-                                                                      .styleFrom(
-                                                                    primary: Colors
-                                                                        .green,
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .symmetric(
-                                                                      horizontal:
-                                                                          30.0,
-                                                                    ),
-                                                                    shape:
-                                                                        RoundedRectangleBorder(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              10.0),
-                                                                    ),
+                                                                  shape:
+                                                                      RoundedRectangleBorder(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10.0),
                                                                   ),
                                                                 ),
-                                                              ],
-                                                            ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        );
-                                                      },
-                                                    );
-                                                  } else {
-                                                    // Guardar la información
-                                                    setState(() {
-                                                      contadorBotonGuardar++;
-                                                      _saveContadorBotonGuardar(
-                                                          contadorBotonGuardar);
-                                                      _summaryList
-                                                          .addAll(summaryList);
-                                                      _saveSummaryList(
-                                                          _summaryList);
-                                                      _clearDataList();
-                                                      trazabilidadController
-                                                          .clear();
-                                                      tapaController.clear();
-                                                      _textEditingController
-                                                          .clear();
-                                                    });
-                                                    Navigator.of(context)
-                                                        .pop(); // Cerrar el diálogo
-                                                  }
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.green,
-                                                ),
-                                                child: const Text('Guardar'),
+                                                        ),
+                                                      );
+                                                    },
+                                                  );
+                                                } else {
+                                                  // Guardar la información
+                                                  setState(() {
+                                                    contadorBotonGuardar++;
+                                                    _saveContadorBotonGuardar(
+                                                        contadorBotonGuardar);
+                                                    _summaryList
+                                                        .addAll(summaryList);
+                                                    _saveSummaryList(
+                                                        _summaryList);
+                                                    _clearDataList();
+                                                    trazabilidadController
+                                                        .clear();
+                                                    tapaController.clear();
+                                                    _textEditingController
+                                                        .clear();
+                                                  });
+                                                  Navigator.of(context)
+                                                      .pop(); // Cerrar el diálogo
+                                                }
+                                                print(summaryList);
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.green,
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                              child: const Text('Guardar'),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );
