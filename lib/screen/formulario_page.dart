@@ -474,7 +474,12 @@ class _FormularioPageState extends State<FormularioPage> {
                 // key: UniqueKey(),
                 expansionCallback: (int index, bool isExpanded) {
                   setState(() {
-                    _datas[index].isExpanded = !isExpanded;
+                    // _datas[index].isExpanded = !isExpanded;
+                    //todo esta propiedad (bool isExpanded) es una propiedad que te la da el callbacks es decir
+                    //cuando la expandes, se pone en true, que pasa que tenias un "!isExpanded"
+                    //por lo que estabas negando lo que te decir, en este caso, cuando el te ponia TRUE
+                    //tu lo negabas y ponias FALSE de esa forma no se expandia
+                    _datas[index].isExpanded = isExpanded;
                   });
                 },
                 children: _datas.map<ExpansionPanel>((Item item) {
