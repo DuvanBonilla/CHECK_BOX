@@ -342,20 +342,20 @@ class _MyTapasPageState extends State<TapasPage> {
                         },
                       );
                     },
-                    child: const Icon(Icons.delete),
+                    child: const Icon(Icons.delete,color:Colors.white),
                   ),
                   FloatingActionButton(
                     heroTag: 'btn1',
                     backgroundColor: HexColor('1f2352'),
                     onPressed: _add,
                     tooltip: 'Increment',
-                    child: const Icon(Icons.add),
+                    child: const Icon(Icons.add,color:Colors.white),
                   ),
                   FloatingActionButton(
                     heroTag: 'btn2',
                     backgroundColor: HexColor('1f2352'),
                     onPressed: () => _send(context),
-                    child: const Icon(Icons.send),
+                    child: const Icon(Icons.send,color:Colors.white),
                   ),
                 ],
               ),

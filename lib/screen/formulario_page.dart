@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:check_box/screen/resumen_general.dart';
 import 'package:check_box/screen/resumen_ibm.dart';
+import 'package:check_box/screen/resumen_mocho.dart';
 import 'package:check_box/screen/resumen_page.dart';
 import 'package:check_box/screen/resumen_trazabilidad.dart';
 import 'package:flutter/material.dart';
@@ -358,7 +359,7 @@ class _FormularioPageState extends State<FormularioPage> {
             children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.green, // Color con HexColor
+                primary: Colors.green, // Color con HexColor
                 ),
                 onPressed: () {
                   Navigator.pop(context); // Cierra el diálogo
@@ -370,6 +371,22 @@ class _FormularioPageState extends State<FormularioPage> {
                   );
                 },
                 child: const Text('Placa'),
+              ),
+                const SizedBox(width: 16, height: 16),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green, // Color con HexColor
+                ),
+                onPressed: () {
+                  Navigator.pop(context); // Cierra el diálogo
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ResumenMxP(),
+                    ),
+                  );
+                },
+                child: const Text('M x P'),
               ),
               const SizedBox(width: 16, height: 16),
               ElevatedButton(

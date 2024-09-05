@@ -216,9 +216,9 @@ class _ResumenTrzState extends State<ResumenTrz> {
       for (var i = 0; i < _summaryList.length; i++) {
         final summary = _summaryList[i];
         final parts = summary.split(' : ');
+        final firstData = parts[0];
         final summaryTraza = parts[3];
         final summaryTapa = parts[4];
-        final firstData = parts[0];
 
         if (summaryTraza == traza &&
             summaryTapa == tapa &&
@@ -337,7 +337,8 @@ class _ResumenTrzState extends State<ResumenTrz> {
                     });
                   },
                 ),
-                Container(
+                Expanded(
+                child: Container(
                   color: _isCheckedMap[traza] ?? false ? Colors.green : null,
                   child: Text(
                     '$traza  :  $totalSum',
@@ -346,6 +347,7 @@ class _ResumenTrzState extends State<ResumenTrz> {
                       color: Colors.black,
                     ),
                   ),
+                ),
                 ),
                 IconButton(
                   icon: const Icon(Icons.delete),
